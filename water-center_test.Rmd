@@ -1,8 +1,8 @@
 ---
 title: "water-center_test"
 output:
-  word_document: default
   pdf_document: default
+  word_document: default
   html_document: default
 ---
 
@@ -12,13 +12,13 @@ knitr::opts_chunk$set(echo = FALSE)
 ```{r set abstract file & author objects, results = 'asis'}
 meld <- read.csv("./TheAbstractSubmissions2018.csv")
 
-first_author_name <- paste(meld$a, meld$b,sep = "")#;head(first_author_name,6)
+first_author_name <- paste(meld$a, meld$b,sep = "")
 MI = meld$MI; for(i in MI){
   if(is.na(MI[i]) == ""){
   }  else(MI == MI[i])
-};MI
-MI = gsub("[[:punct:]]", "", MI)
-author_name = stringr::str_to_title(paste(meld$a, MI, meld$b)) 
+}
+MI = gsub("[[:punct:]]", "", MI)#remove any '.' or other punctuation
+author_name = stringr::str_to_title(paste(meld$a, MI, meld$b))#standardize the capitalization
 
 first_coauthor = meld[,c( "g", "h")];second_coauthor = meld[,c("j", "k")]; third_coauthor = meld[, c("m", "n")];fourth_coauthor = meld[,c("p", "q")]; fifth_coauthor = meld[,c("s", "t")];sixth_coauthor= meld[,c("v", "w")]
 
@@ -39,11 +39,14 @@ print(as.character(droplevels(title[i])), size = 20)
 
 
 ```{r author, echo = F, results='asis'}
-for (i in 1:nrow(meld)){
-  z = which.min(apply(coauthors[i], MARGIN = 2, function(x) ragtop::is.blank(x)));print(z)
-  #names = coauthors[,1:as.numeric(z)]
+
+names = list()
+for (i in 1:length(author_name)){
+ z = min(which(apply(coauthors[i,], MARGIN = 2, ragtop::is.blank)))
+ 
+names[i] = coauthors[i,1:as.numeric(z)];return(as.data.frame(unlist(names)))
   }
- print(paste(author_name[i]), as.character(z)),size = 16)
+ #print(paste(author_name[i]), as.character(z)),size = 16)
 ```
 
 
