@@ -1,0 +1,92 @@
+---
+title: "water-center_test"
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+```{r set talk stuff, results = 'asis',echo = F}
+rm(list=ls())
+meld <- read.csv("~/Desktop/TheAbstractSubmissions2018.csv")
+
+first_author_name <- paste(meld$a, meld$b,sep = "")#;head(first_author_name,6)
+MI = meld$MI; for(i in MI){
+  if(is.na(MI[i]) == ""){
+  }  else(MI == MI[i])
+}#;head(MI)
+author_name = paste(meld$a, MI, meld$b)#;head(author_name) 
+
+first_coauthor = meld[,c( "g", "h")];second_coauthor = meld[,c("j", "k")]; third_coauthor = meld[, c("m", "n")];fourth_coauthor = meld[,c("p", "q")]; fifth_coauthor = meld[,c("s", "t")];sixth_coauthor= meld[,c("v", "w")]
+
+coauthors = meld[,c("g", "h","j", "k","m", "n","p", "q","s", "t","v", "w")];coauthors$x = ""
+title = meld[,'title']
+
+for (i in 1:nrow(meld)){
+print(as.character(droplevels(title[i])), size = 20)
+  #for(j in 1:dim(coauthors)[2]){
+    
+  
+ 
+
+  #print(paste(first_coauthor[i],",", second_coauthor[i],",",third_coauthor[i],",",fou)
+  
+}
+```
+
+
+```{r author, echo = F, results='asis'}
+for (i in 1:nrow(meld)){
+  z = which.min(apply(coauthors[i], MARGIN = 2, function(x) ragtop::is.blank(x)));print(z)
+  #names = coauthors[,1:as.numeric(z)]
+  }
+ print(paste(author_name[i]), as.character(z)),size = 16)
+```
+
+
+```{r abstract, echo = F, results = 'asis'}
+abstract = meld[,'abstract']
+
+cat("\n\\newpage\n")
+```
+
+\documentclass[a4paper]{article}
+%\usepackage{simplemargins}
+
+%\usepackage[square]{natbib}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+
+\begin{document}
+\pagenumbering{gobble}
+
+\Large
+ \begin{center}
+Simple Single Page Abstract template\\ 
+
+\hspace{10pt}
+
+% Author names and affiliations
+\large
+Arthur Author$^1$, Cecilia CoAuthor$^2$ \\
+
+\hspace{10pt}
+
+\small  
+$^1$) First affiliation\\
+arthur.author@correspondence.email.com\\
+$^2$) Second affiliation
+
+\end{center}
+
+\hspace{10pt}
+
+\normalsize
+
+
+\end{document}
