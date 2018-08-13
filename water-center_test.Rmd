@@ -1,15 +1,46 @@
 ---
 title: "water-center_test"
 output:
-  pdf_document: default
-  word_document: default
   html_document: default
+  word_document: default
+  pdf_document: default
+    #template: single-page-abstract_template.tex
 ---
+```{r setup, include = F}
+# A Prefix nulling hook.
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+# Make sure to keep the default for normal processing.
+default_output_hook <- knitr::knit_hooks$get("output")
+
+# Output hooks handle normal R console output.
+knitr::knit_hooks$set( output = function(x, options) {
+
+  comment <- knitr::opts_current$get("comment")
+  if( is.na(comment) ) comment <- ""
+  can_null <- grepl( paste0( comment, "\\s*\\[\\d?\\]" ),
+                     x, perl = TRUE)
+  do_null <- isTRUE( knitr::opts_current$get("null_prefix") )
+  if( can_null && do_null ) {
+    # By default R print output aligns at the right brace.
+    align_index <- regexpr( "\\]", x )[1] - 1
+    # Two cases: start or newline
+    re <- paste0( "^.{", align_index, "}\\]")
+    rep <- comment
+    x <- gsub( re, rep,  x )
+    re <- paste0( "\\\n.{", align_index, "}\\]")
+    rep <- paste0( "\n", comment )
+    x <- gsub( re, rep,  x )
+  }
+
+  default_output_hook( x, options )
+
+})
+
+knitr::opts_template$set("kill_prefix"=list(comment=NA, null_prefix=TRUE))
+knitr::opts_chunk$set("echo" = F, opts.label = "kill.prefix")
 ```
-```{r set abstract file & author objects, results = 'asis'}
+
+```{r set abstract file & author objects, results = 'asis', null_prefix = T}
 meld <- read.csv("./TheAbstractSubmissions2018.csv")
 
 first_author_name <- paste(meld$a, meld$b,sep = "")
@@ -27,12 +58,6 @@ title = meld[,'title']
 
 for (i in 1:nrow(meld)){
 print(as.character(droplevels(title[i])), size = 20)
-  #for(j in 1:dim(coauthors)[2]){
-    
-  
- 
-
-  #print(paste(first_coauthor[i],",", second_coauthor[i],",",third_coauthor[i],",",fou)
   
 }
 ```
@@ -40,12 +65,12 @@ print(as.character(droplevels(title[i])), size = 20)
 
 ```{r author, echo = F, results='asis'}
 
-names = list()
-for (i in 1:length(author_name)){
- z = min(which(apply(coauthors[i,], MARGIN = 2, ragtop::is.blank)))
+#names = list()
+#for (i in 1:length(author_name)){
+# z = min(which(apply(coauthors[i,], MARGIN = 2, ragtop::is.blank)))
  
-names[i] = coauthors[i,1:as.numeric(z)];return(as.data.frame(unlist(names)))
-  }
+#names[i] = coauthors[i,1:as.numeric(z)];return(as.data.frame(unlist(names)))
+#  }
  #print(paste(author_name[i]), as.character(z)),size = 16)
 ```
 
@@ -55,41 +80,3 @@ abstract = meld[,'abstract']
 
 cat("\n\\newpage\n")
 ```
-
-\documentclass[a4paper]{article}
-%\usepackage{simplemargins}
-
-%\usepackage[square]{natbib}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
-\usepackage{graphicx}
-
-\begin{document}
-\pagenumbering{gobble}
-
-\Large
- \begin{center}
-Simple Single Page Abstract template\\ 
-
-\hspace{10pt}
-
-% Author names and affiliations
-\large
-Arthur Author$^1$, Cecilia CoAuthor$^2$ \\
-
-\hspace{10pt}
-
-\small  
-$^1$) First affiliation\\
-arthur.author@correspondence.email.com\\
-$^2$) Second affiliation
-
-\end{center}
-
-\hspace{10pt}
-
-\normalsize
-
-
-\end{document}
