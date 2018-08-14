@@ -40,7 +40,7 @@ knitr::opts_template$set("kill_prefix"=list(comment=NA, null_prefix=TRUE))
 knitr::opts_chunk$set("echo" = F, opts.label = "kill.prefix")
 ```
 
-```{r set abstract file & author objects, results = 'asis', null_prefix = T}
+```{r set abstract file & author objects, null_prefix = TRUE}
 meld <- read.csv("./TheAbstractSubmissions2018.csv")
 
 first_author_name <- paste(meld$a, meld$b,sep = "")
@@ -56,12 +56,27 @@ first_coauthor = meld[,c( "g", "h")];second_coauthor = meld[,c("j", "k")]; third
 coauthors = meld[,c("g", "h","j", "k","m", "n","p", "q","s", "t","v", "w")];coauthors$x = ""
 title = meld[,'title']
 
-for (i in 1:nrow(meld)){
-print(as.character(droplevels(title[i])), size = 20)
-  
+names = list()
+for (i in 1:length(author_name)){
+ z = min(which(apply(coauthors[i,], MARGIN = 2, ragtop::is.blank)))
+ 
+names[i] = coauthors[i,1:as.numeric(z)];return(as.data.frame(unlist(names)))
 }
+
 ```
 
+```{r, null_prefix = TRUE}
+for (i in 1:nrow(meld)){
+x = cat(as.character(droplevels(title[i])))
+y cat(as.character(droplevels(authors[i])), size = 16)  
+  
+}
+
+
+
+```
+
+`r print(x, size = 20)`
 
 ```{r author, echo = F, results='asis'}
 
