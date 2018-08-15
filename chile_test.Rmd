@@ -1,0 +1,40 @@
+---
+title: "Individual Species"
+author: 'Dolf Andringa'
+date: "February 7, 2016"
+output: html_document
+---
+```{r echo=FALSE, eval=TRUE, include=FALSE}
+library(knitr)
+library(lmtest)
+load("samples.RDa")
+data <-subset(samples, species_group==sg)
+data$y <- data[,c(sp)]
+```
+
+```{r eval='TRUE', echo=FALSE, results='asis'}
+if(specnum==0) cat('\n##',sg,'\n');
+```
+
+### `r sp` {.tabset}
+`r sp.common`
+
+```{r eval=TRUE, echo=FALSE}
+
+m<-glm(data$y~data$site_name, family=poisson)
+
+coefs<-NULL
+coefs$coefficient<-NULL
+coefs$value<-NULL
+coefs$pvalue<-NULL
+coeft<-coeftest(m)
+for(name in names(m$coefficients)){
+    p<-round(coeft[name,c("Pr(>|z|)")],3)
+    coefs$coefficient<-c(coefs$coefficient,name)
+    coefs$value<-c(coefs$value,m$coefficients[[name]])
+    coefs$pvalue<-c(coefs$pvalue,p)
+}
+coefs<-as.data.frame(coefs)
+coefs<-coefs[with(coefs,order(coefs$pvalue)),]
+knitr::kable(coefs)
+```
