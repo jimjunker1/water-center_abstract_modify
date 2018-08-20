@@ -1,0 +1,49 @@
+---
+title: "test"
+author: 'JimJunker'
+date: 
+output:
+  html_document:
+    fig_caption: yes
+    keep_md: yes
+    number_sections: no
+    theme: journal
+    toc: yes
+    toc_depth: 2
+    toc_float:
+      collapsed: true
+---
+```{r getdata, results=FALSE, eval=TRUE, echo=FALSE, message=FALSE, warning=FALSE}
+meld <- read.csv("./TheAbstractSubmissions2018.csv")
+library(knitr)
+```
+# Methods
+
+.... some explanation
+
+# Results
+```{r echo=FALSE, eval=TRUE, include=FALSE}
+out <- NULL
+first_author_name <- paste(meld$a, meld$b,sep = "")
+MI = meld$MI; for(i in MI){
+  if(is.na(MI[i]) == ""){
+  }  else(MI == MI[i])
+}
+MI = gsub("[[:punct:]]", "", MI)#remove any '.' or other punctuation
+author_name = stringr::str_to_title(paste(meld$a, MI, meld$b))#standardize the capitalization
+title = meld[,'title']#grab titles
+abstract = meld[,'abstract']#grab abstracts
+
+first_coauthor = meld[,c( "g", "h")];second_coauthor = meld[,c("j", "k")]; third_coauthor = meld[, c("m", "n")];fourth_coauthor = meld[,c("p", "q")]; fifth_coauthor = meld[,c("s", "t")];sixth_coauthor= meld[,c("v", "w")]
+
+coauthors = meld[,c("g", "h","j", "k","m", "n","p", "q","s", "t","v", "w")];coauthors$x = ""
+
+names = list();z = c()
+for (i in 1:length(author_name)){
+ z[i] = min(which(apply(coauthors[i,], MARGIN = 2, ragtop::is.blank)))
+if(z == 1){ names[[i]] = NULL  
+} else(names[[i]] = coauthors[i,1:(z[i]-1)])
+ }
+ names[[1]][1:length(names[[1]])]
+```
+`r paste(out, collapse='\n')

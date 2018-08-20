@@ -1,11 +1,3 @@
----
-title: "water-center_test"
-output:
-  pdf_document: default
-    #template: single-page-abstract_template.tex
-  word_document: default
-  html_document: default
----
 \documentclass[a4paper]{article}
 %\usepackage{simplemargins}
 
@@ -16,9 +8,10 @@ output:
 \usepackage{graphicx}
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 \pagenumbering{gobble}
 
-```{r setup, include = F}
+<<r setup, echo=FALSE, results=hide>>=
 # A Prefix nulling hook.
 
 # Make sure to keep the default for normal processing.
@@ -50,9 +43,9 @@ knitr::knit_hooks$set( output = function(x, options) {
 
 knitr::opts_template$set("kill_prefix"=list(comment=NA, null_prefix=TRUE))
 knitr::opts_chunk$set("echo" = F, opts.label = "kill.prefix")
-```
+@
 
-```{r set abstract file & author objects, include = F, warning = F, message = F}
+<<r set abstract file & author objects, echo=F, warning = F, message = F, results =hide>>=
 meld <- read.csv("./TheAbstractSubmissions2018.csv")
 
 first_author_name <- paste(meld$a, meld$b,sep = "")
@@ -75,44 +68,39 @@ for (i in 1:length(author_name)){
 if(z == 1){ names[[i]] = NULL  
 } else(names[[i]] = coauthors[i,1:(z[i]-1)])
  }
- names[[1]][1:length(names[[1]])]
- 
-```
+@
+
 \Large
  \begin{center}
-`r cat(as.character(droplevels(title[i])),"\n")`\\ 
+
+<<r, echo = FALSE, null_prefix = TRUE>>= 
+for (i in 1:nrow(meld)){
+  cat(as.character(droplevels(title[i])),"\n")
+  names[[i]][1:length(names[i])]
+  cat(abstract[i])
+cat("\n\\newpage\n")
+}
+@
+
+
+\hspace{10pt}
+% Author names
+\large
+<<r>>=
+for (i in 1:nrow(meld)){
+}
+@
 
 \hspace{10pt}
 
+\end{center}
 
-```{r, null_prefix = TRUE, results = 'asis'}
+\hspace{10pt}
+\normalsize
+<<r, null_prefix = TRUE, echo = F>>=
 for (i in 1:nrow(meld)){
-cat(as.character(droplevels(title[i])),"\n")
- 
-cat(names[i]$g,"\n")
 
-cat(abstract[i])
-cat("\n\\newpage\n")
 
 }
-```
-```{r results = 'asis', echo = F}
-```
-
-```{r author, echo = F, results='asis'}
-
-#names = list()
-#for (i in 1:length(author_name)){
-# z = min(which(apply(coauthors[i,], MARGIN = 2, ragtop::is.blank)))
-# `r print(x, size = 20)`
-
-#names[i] = coauthors[i,1:as.numeric(z)];return(as.data.frame(unlist(names)))
-#  }
- #print(paste(author_name[i]), as.character(z)),size = 16)
-```
-
-
-```{r abstract, echo = F, results = 'asis'}
-
-#cat("\n\\newpage\n")
-```
+@
+\end{document}
