@@ -7,7 +7,7 @@ output:
     #template: single-page-abstract_template.tex
 ---
 
-```{r, echo = F,}
+```{r, echo = F}
 suppressWarnings(suppressPackageStartupMessages(library(ggplot2)))
 suppressWarnings(suppressPackageStartupMessages(library(dplyr)))
 suppressWarnings(suppressPackageStartupMessages(library(stringr)))
@@ -26,9 +26,9 @@ MI = meld$MI; for(i in MI){
 MI = gsub("[[:punct:]]", "", MI)#remove any '.' or other punctuation
 author_name = stringr::str_to_title(paste(meld$a, MI, meld$b))#standardize the capitalization
 
-first_coauthor = meld[,c( "g", "h")];second_coauthor = meld[,c("j", "k")]; third_coauthor = meld[, c("m", "n")];fourth_coauthor = meld[,c("p", "q")]; fifth_coauthor = meld[,c("s", "t")];sixth_coauthor= meld[,c("v", "w")]
+first_coauthor = meld[,c( "g", "h")];second_coauthor = meld[,c("j", "k")]; third_coauthor = meld[,c("m", "n")];fourth_coauthor = meld[,c("p", "q")]; fifth_coauthor = meld[,c("s", "t")];sixth_coauthor= meld[,c("v", "w")]
 
-coauthors = meld[,c("g", "h","j", "k","m", "n","p", "q","s", "t","v", "w")];coauthors$x = ""
+coauthors = meld[,c("g","h","j","k","m","n","p","q","s","t","v", "w")];coauthors$x = ""
 
 names = list()
 for (i in 1:length(author_name)){
