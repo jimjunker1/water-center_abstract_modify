@@ -25,57 +25,54 @@ paste3 <- function(...,sep=", ") {
      }
 ```
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-meld <- read.csv("./submission-subset_2018.csv")
+meld <- read.csv("./submission-subset_2018.csv")#this is only a subset of the data. Need to fix special characters in full prior
 colnames(meld) = c("submission_time","author_1_first","author_1_mi","author_1_last","email","author_1_affiliation","phone","fax","address","status","moderator","judge","presentation_type","additional_authors","author_2_first","author_2_mi", "author_2_last", "author_2_affiliation","author_3_first", "author_3_mi", "author_3_last", "author_3_affiliation","author_4_first", "author_4_mi", "author_4_last", "author_4_affiliation","author_5_first", "author_5_mi", "author_5_last", "author_5_affiliation","author_6_first", "author_6_mi", "author_6_last", "author_6_affiliation","author_7_first", "author_7_mi", "author_7_last", "author_7_affiliation","author_8_first", "author_8_mi", "author_8_last", "author_8_affiliation","author_9_first", "author_9_mi", "author_9_last", "author_9_affiliation","author_10_first", "author_10_mi", "author_10_last", "author_10_affiliation","title","abstract")
 
-#i = 2
-#first_author_name <- paste(meld$author_1_first, meld$author_1_last,sep = "")
-#MI = meld$author_1_mi; for(z in MI){
-#  if(is.na(MI[z]) == ""){
-#  }  else(MI == MI[z])
-#}
-#MI = gsub("[[:punct:]]", "", MI)#remove any '.' or other punctuation
-#author_name = stringr::str_to_title(paste(meld$author_1_first, MI, meld$author_1_last))#standardize the capitalization
-#first_author = author_name[i]
+#i = 4
 #create an author list
 
-author_first = meld[i, grepl("first",names(meld))];author_first[] = lapply(author_first, as.character)
-author_last  = meld[i, grepl("last", names(meld))];author_last[] = lapply(author_last, as.character)
-author_mi = meld[i, grepl("_mi", names(meld))];author_mi[] = lapply(author_mi, as.character)
-author_mi = gsub("[[:punct:]]", "", author_mi)
-author_list = stringr::str_to_title(paste3(author_first, author_mi, author_last, sep=" "))
+author_first = meld[i, grepl("first",names(meld))];author_first[] = lapply(author_first, as.character)#grab all 1st names
+author_last  = meld[i, grepl("last", names(meld))];author_last[] = lapply(author_last, as.character)#grab all last names
+author_mi = meld[i, grepl("_mi", names(meld))];author_mi[] = lapply(author_mi, as.character)#grab some middle names
+author_mi = gsub("[[:punct:]]", "", author_mi)#remove punctuation. standardize middle initial
+author_list = stringr::str_to_title(paste3(author_first, author_mi, author_last, sep=" "))#paste and standardize capitalization. discard '' and ID true NAs
 
-author_list = author_list[!is.na(author_list)]
+author_list = author_list[!is.na(author_list)]#remove NAs
 
-affiliations = meld[i,grepl("affiliation", names(meld))];affiliations[]= lapply(affiliations, as.character)
-affiliations = paste3(affiliations)
-affiliations = affiliations[!is.na(affiliations)]
+#create affiliation list
+affiliations = meld[i,grepl("affiliation", names(meld))];affiliations[]= lapply(affiliations, as.character)#grab affiliations
+affiliations = paste3(affiliations)#ID blanks and true NAs
+affiliations = affiliations[!is.na(affiliations)]#remove NAs
 
-aff_df = data.frame(affiliation = unique(affiliations), super_script = 1:length(unique(affiliations)))
+aff_df = data.frame(affiliation = unique(affiliations), super_script = 1:length(unique(affiliations)))#create DF of unique starting with 1st author's affiliation
 
 aff_script = c()
 for(q in seq_along(affiliations)){
   aff_script[q] = as.character(aff_df[which(affiliations[q] == aff_df[,1]),2])
-}
+}#if duplicates. compress to match unique
 
-author_aff = paste(author_list, aff_script, sep = "")
+author_aff = paste(author_list, aff_script, sep = "")#paste string of authors and their affiliation
 
-orgs = unlist(lapply(aff_df["affiliation"], as.character))
-org_aff = paste(aff_df['super_script'], orgs, sep = "")
+orgs = unlist(lapply(aff_df["affiliation"], as.character))#ID organization of affiliation vector
+orgs_script = unlist(lapply(aff_df['super_script'], as.character))#ID superscript vector
+org_aff = paste(orgs_script, orgs, sep = "")#paste super script with affiliation
 
 #cat(gsub("(^[0-9])(\\D+)(\\D)\\>", "^\\1^\\2\\3\n", org_aff))
 
 # `r affiliation_inst[1]`
 #`r paste(gsub("([[:digit:]])([[:alpha:]])", "^\\1^\\2", org_aff))`
+#paste(gsub("(^[0-9])(\\D+)(\\D)\\>", "^\\1^\\2\\3", org_aff))
 
-title = meld[i,'title']
-abstract = meld[i,'abstract']
+
+title = meld[i,'title']#grab title of abstract
+abstract = meld[i,'abstract']#grab abstract text
+
 ```
 
 #`r title`
 
 ##`r paste(gsub("([[:alpha:]])([[:digit:]])", "\\1^\\2^",author_aff))`
 
-`r paste(gsub("(^[0-9])(\\D+)(\\D)\\>", "^\\1^\\2\\3\n", org_aff))`
+`r paste(gsub("(^[0-9])(\\D+)(\\D)\\>", "^\\1^\\2\\3", org_aff))`
 
 `r abstract`
