@@ -2,6 +2,7 @@
 
 # File 1(this file): Should be an R-Script 
 # contains a loop that iteratively calls an Rmarkdown file (i.e. File 2)
+# must have full Tex installation to spit out PDFs, but you could also go to HTML 
 
 # load packages
 library(knitr)
@@ -19,3 +20,11 @@ for(i in 1:nrow(meld)){
                     output_file =  paste(meld$author_1_last[i],'_','MT-AWRA','_',"2018",'_',"abstract", ".pdf", sep=''), 
                     output_dir = './reports')
 }#output is found in 'reports' folder
+
+#for Running HTML use this code below.
+#for(i in 1:nrow(meld)){
+#  rmarkdown::render('abstract-test_markdown.Rmd',  # file 2
+#                    output_format = 'html_document',
+#                    output_file =  paste(meld$author_1_last[i],'_','MT-AWRA','_',"2018",'_',"abstract", ".html", sep=''), 
+#                    output_dir = './reports')
+#}#output is found in 'reports' folder
