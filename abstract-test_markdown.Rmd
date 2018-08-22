@@ -1,5 +1,4 @@
 ---
-title: "a"
 output:
   #html_document: default
   #word_document: default
@@ -14,33 +13,69 @@ suppressWarnings(suppressPackageStartupMessages(library(stringr)))
 suppressWarnings(suppressPackageStartupMessages(library(knitr)))
 suppressWarnings(suppressPackageStartupMessages(library(markdown)))
 suppressWarnings(suppressPackageStartupMessages(library(rmarkdown)))
+
+paste3 <- function(...,sep=", ") {
+     L <- list(...)
+     L <- lapply(L,function(x) {x[is.na(x)] <- ""; x})
+     ret <-gsub(paste0("(^",sep,"|",sep,"$)"),"",
+                 gsub(paste0(sep,sep),sep,
+                      do.call(paste,c(L,list(sep=sep)))))
+     is.na(ret) <- ret==""
+     ret
+     }
 ```
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
-meld <- read.csv("./TheAbstractSubmissions2018.csv")
+meld <- read.csv("./submission-subset_2018.csv")
+colnames(meld) = c("submission_time","author_1_first","author_1_mi","author_1_last","email","author_1_affiliation","phone","fax","address","status","moderator","judge","presentation_type","additional_authors","author_2_first","author_2_mi", "author_2_last", "author_2_affiliation","author_3_first", "author_3_mi", "author_3_last", "author_3_affiliation","author_4_first", "author_4_mi", "author_4_last", "author_4_affiliation","author_5_first", "author_5_mi", "author_5_last", "author_5_affiliation","author_6_first", "author_6_mi", "author_6_last", "author_6_affiliation","author_7_first", "author_7_mi", "author_7_last", "author_7_affiliation","author_8_first", "author_8_mi", "author_8_last", "author_8_affiliation","author_9_first", "author_9_mi", "author_9_last", "author_9_affiliation","author_10_first", "author_10_mi", "author_10_last", "author_10_affiliation","title","abstract")
 
-first_author_name <- paste(meld$a, meld$b,sep = "")
-MI = meld$MI; for(i in MI){
-  if(is.na(MI[i]) == ""){
-  }  else(MI == MI[i])
+#i = 2
+#first_author_name <- paste(meld$author_1_first, meld$author_1_last,sep = "")
+#MI = meld$author_1_mi; for(z in MI){
+#  if(is.na(MI[z]) == ""){
+#  }  else(MI == MI[z])
+#}
+#MI = gsub("[[:punct:]]", "", MI)#remove any '.' or other punctuation
+#author_name = stringr::str_to_title(paste(meld$author_1_first, MI, meld$author_1_last))#standardize the capitalization
+#first_author = author_name[i]
+#create an author list
+
+author_first = meld[i, grepl("first",names(meld))];author_first[] = lapply(author_first, as.character)
+author_last  = meld[i, grepl("last", names(meld))];author_last[] = lapply(author_last, as.character)
+author_mi = meld[i, grepl("_mi", names(meld))];author_mi[] = lapply(author_mi, as.character)
+author_mi = gsub("[[:punct:]]", "", author_mi)
+author_list = stringr::str_to_title(paste3(author_first, author_mi, author_last, sep=" "))
+
+author_list = author_list[!is.na(author_list)]
+
+affiliations = meld[i,grepl("affiliation", names(meld))];affiliations[]= lapply(affiliations, as.character)
+affiliations = paste3(affiliations)
+affiliations = affiliations[!is.na(affiliations)]
+
+aff_df = data.frame(affiliation = unique(affiliations), super_script = 1:length(unique(affiliations)))
+
+aff_script = c()
+for(q in seq_along(affiliations)){
+  aff_script[q] = as.character(aff_df[which(affiliations[q] == aff_df[,1]),2])
 }
-MI = gsub("[[:punct:]]", "", MI)#remove any '.' or other punctuation
-author_name = stringr::str_to_title(paste(meld$a, MI, meld$b))#standardize the capitalization
 
-first_coauthor = meld[,c( "g", "h")];second_coauthor = meld[,c("j", "k")]; third_coauthor = meld[,c("m", "n")];fourth_coauthor = meld[,c("p", "q")]; fifth_coauthor = meld[,c("s", "t")];sixth_coauthor= meld[,c("v", "w")]
+author_aff = paste(author_list, aff_script, sep = "")
 
-coauthors = meld[,c("g","h","j","k","m","n","p","q","s","t","v", "w")];coauthors$x = ""
+orgs = unlist(lapply(aff_df["affiliation"], as.character))
+org_aff = paste(aff_df['super_script'], orgs, sep = "")
 
-names = list()
-for (i in 1:length(author_name)){
-  z = min(which(apply(coauthors[i,], MARGIN = 2, ragtop::is.blank)))
-  
-  names[i] = coauthors[i,1:as.numeric(z)]#;return(as.data.frame(unlist(names)))
-}
+#cat(gsub("(^[0-9])(\\D+)(\\D)\\>", "^\\1^\\2\\3\n", org_aff))
 
-first_author = author_name[i]
+# `r affiliation_inst[1]`
+#`r paste(gsub("([[:digit:]])([[:alpha:]])", "^\\1^\\2", org_aff))`
+
 title = meld[i,'title']
 abstract = meld[i,'abstract']
 ```
-`r title`
-`r first_author`
+
+#`r title`
+
+##`r paste(gsub("([[:alpha:]])([[:digit:]])", "\\1^\\2^",author_aff))`
+
+`r paste(gsub("(^[0-9])(\\D+)(\\D)\\>", "^\\1^\\2\\3\n", org_aff))`
+
 `r abstract`
